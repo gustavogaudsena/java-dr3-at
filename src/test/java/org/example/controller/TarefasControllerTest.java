@@ -10,8 +10,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class TarefasControllerTest {
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -71,4 +70,31 @@ class TarefasControllerTest {
             assertEquals(json.get("data").get("titulo").asText(), tarefa.getTitulo(), "Deve retornar a tarefa com o mesmo título cadastrado");
         });
     }
+
+    @Test
+    @DisplayName(value = "GET no endpoint /tarefas/ deve retornar uma lista com todos os itens cadastrados")
+    public void testGetAll() {
+        Javalin app = setApp();
+        String mockDescricao = "Executando tarefa 8 do AT";
+        String mockTitulo = "Tarefa 8";
+        Tarefa tarefa = new Tarefa(mockTitulo, mockDescricao);
+        Database.data.add(tarefa);
+
+        JavalinTest.test(app, (_, client) -> {
+            var response = client.get("/tarefas/");
+
+            assertEquals(200, response.code(), "Código deve ser 200");
+            assert response.body() != null;
+            JsonNode json = objectMapper.readTree(response.body().string());
+
+            assertTrue(json.get("data").isArray(), "Data deve ser um array");
+            assertFalse(json.get("data").isEmpty(), "Data deve conter pelo menos um item");
+
+            assertEquals(json.get("data").get(0).get("id").asText(), tarefa.getId().toString(), "Deve retornar a tarefa com o mesmo Id buscado");
+            assertEquals(json.get("data").get(0).get("descricao").asText(), tarefa.getDescricao(), "Deve retornar a tarefa com a mesma descrição cadastrada");
+            assertEquals(json.get("data").get(0).get("titulo").asText(), tarefa.getTitulo(), "Deve retornar a tarefa com o mesmo título cadastrado");
+
+        });
+    }
+
 }
