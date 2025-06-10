@@ -4,8 +4,9 @@ import io.javalin.Javalin;
 
 public class JavalinMain {
     public static void main(String[] args) {
-        Javalin app = Javalin.create().start(7000);
+        Javalin app = Javalin.create();
 
-        app.get("/hello", context -> context.result("Olá, Javalin!"));
+        app.get("/hello", context -> context.result("Hello, Javalin!"));
+        app.start(7001);
     }
 }
