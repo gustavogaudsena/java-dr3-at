@@ -32,6 +32,13 @@ public class JavalinMain {
             context.result(mensagem);
         });
 
+        app.get("/saudacao/{nome}", context -> {
+            String nome = context.pathParam("nome");
+            String saudacao = String.format("Olá, %s", nome);
+            var response = Map.of("mensagem", saudacao);
+            context.json(response);
+        });
+
         app.start(7001);
     }
 }
