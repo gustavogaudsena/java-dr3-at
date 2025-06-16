@@ -8,17 +8,19 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 
 public class HttpClient {
     public static void main(String[] args) throws IOException, URISyntaxException {
         try {
             createTarefa();
+            getTarefas();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private static String SERVER_URL = "http://localhost:7002" ;
+    private static final String SERVER_URL = "http://localhost:7001" ;
 
     public static String get(String route) throws IOException, URISyntaxException {
         URL url = new URI(SERVER_URL + route).toURL();
@@ -30,7 +32,7 @@ public class HttpClient {
         conn.setRequestProperty("Content-Type", "application/json");
 
         InputStreamReader streamReader;
-        streamReader = new InputStreamReader(conn.getInputStream());
+        streamReader = new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8);
         BufferedReader in = new BufferedReader(streamReader);
 
         String inputLine;
@@ -58,7 +60,7 @@ public class HttpClient {
 
 
         try (DataOutputStream out = new DataOutputStream(conn.getOutputStream())) {
-            out.writeBytes(data);
+            out.write(data.getBytes(StandardCharsets.UTF_8));
             out.flush();
         }
 
@@ -94,4 +96,10 @@ public class HttpClient {
         System.out.println(response);
     }
 
+
+    public static void getTarefas() throws IOException, URISyntaxException {
+        String response = get("/tarefas");
+
+        System.out.println(response);
+    }
 }
