@@ -1,6 +1,5 @@
 package org.example;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.BufferedReader;
@@ -19,11 +18,7 @@ public class HttpClient {
 
     public static void main(String[] args) throws IOException, URISyntaxException {
         try {
-            String newTarefa = createTarefa();
-            JsonNode tarefaJson = objectMapper.readTree(newTarefa);
-            String id = tarefaJson.get("id").asText();
-            getTarefaById(id);
-
+            getStatus();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -116,6 +111,12 @@ public class HttpClient {
 
     public static void getTarefaById(String id) throws IOException, URISyntaxException {
         String response = get("/tarefas/" + id);
+
+        System.out.println(response);
+    }
+
+    public static void getStatus() throws IOException, URISyntaxException {
+        String response = get("/status");
 
         System.out.println(response);
     }
